@@ -1,0 +1,100 @@
+<html>
+	<body style='background-color: #ccc'>
+		<canvas id="myCanvas" width='1000px' height='500px' style='background-color: #ddd'>
+
+		</canvas>
+
+		<script src="jquery-3.2.1.min.js"></script>
+
+		<script>
+			$(document).ready(function() {
+
+				$.get("test.rays", function(data) {
+					let loaded = JSON.parse(data);
+
+					console.log(loaded);
+
+					let canvas = document.getElementById("myCanvas");
+					var context = canvas.getContext("2d");
+
+					context.fillStyle = "#00B";
+
+					let lines = loaded;
+
+					// let lines = [[[0.0, -0.2, 0.0, -0.2], [-0.4166666666666667, 0.20833333333333331, 0.98, -0.2], [0.0, 0.0, 0.5, -2.7755575615628914e-17]], [[0.0, -0.1, 0.0, -0.1], [-0.20202020202020202, 0.101010101010101, 0.995, -0.1], [0.0, 0.0, 0.5, -1.3877787807814457e-17]], [[0.0, 0.0, 0.0, 0.0], [-0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.5, 0.0]], [[0.0, 0.10000000000000003, 0.0, 0.10000000000000003], [0.2020202020202021, -0.10101010101010105, 0.995, 0.10000000000000003], [0.0, 0.0, 0.5, 0.0]], [[0.0, 0.2, 0.0, 0.2], [0.4166666666666667, -0.20833333333333331, 0.98, 0.2], [0.0, 0.0, 0.5, 2.7755575615628914e-17]]];
+
+					let minX = "hi";
+					let maxX = "hi";
+					let minY = "hi";
+					let maxY = "hi";
+
+					for (let i = 0; i < lines.length; i++) {
+						let line = lines[i];
+
+						for (let j = 0; j < line.length; j++) {
+							let point = line[j];
+
+							let x = point[2];
+							let y = point[3];
+
+							if (minX == "hi" || x < minX) {
+								minX = x;
+							}
+							if (maxX == "hi" || x > maxX) {
+								maxX = x;
+							}
+							if (minY == "hi" || y < minY) {
+								minY = y;
+							}
+							if (maxY == "hi" || y > maxY) {
+								maxY = y;
+							}
+						}
+					}
+
+					let buf = 1.2;
+					let xDiff = (maxX - minX);
+					let yDiff = (maxY - minY);
+					let width = canvas.width;
+					let height = canvas.height;
+
+					let xStretch = width / (xDiff * buf);
+					let yStretch = height / (yDiff * buf);
+
+					let stretch = xStretch;
+					if (yStretch < xStretch){
+						stretch = yStretch;
+					}
+					let xbuf = width - stretch * xDiff;
+					let ybuf = height - stretch * yDiff;
+
+					for (let i = 0; i < lines.length; i++) {
+						let line = lines[i];
+
+						for (let j = 0; j < line.length; j++) {
+							let point = line[j];
+							let x = point[2];
+							let y = point[3];
+
+							let tx = x * stretch + xbuf / 2;
+							let ty = -y * stretch + height / 2;
+
+							if (j == 0) {
+								context.moveTo(tx, ty);
+							}
+							else {
+								context.lineTo(tx, ty);
+							}
+						}
+						context.stroke();
+					}
+
+					console.log(stretch);
+				});
+
+			});
+
+		</script>
+
+	</body>
+</html>
