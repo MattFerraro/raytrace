@@ -18,9 +18,11 @@ class Parabolic(object):
         result_bs = []
         result_xs = []
         result_ys = []
+        result_freqs = []
+        result_colors = []
 
         for eq in eqns:
-            m, b, old_x, old_y = eq
+            m, b, old_x, old_y, freq = eq
 
             if m == 0:
                 # The special case is super easy
@@ -65,8 +67,10 @@ class Parabolic(object):
             result_bs.append(final_b)
             result_xs.append(x0)
             result_ys.append(y0)
+            result_freqs.append(freq)
 
-        return np.array(zip(result_ms, result_bs, result_xs, result_ys))
+        return np.array(zip(
+            result_ms, result_bs, result_xs, result_ys, result_freqs))
 
     def focal_length_to_x_squared_coeff(self, focal_length):
         '''
@@ -82,5 +86,5 @@ class Parabolic(object):
         return 1.0 / (4 * focal_length)
 
     def __str__(self):
-        return "Parabolic: x = {}y^2 + {}".format(self.a, self.c)
+        return "Parabolic: x = {} * y * y + {}".format(self.a, self.c)
 

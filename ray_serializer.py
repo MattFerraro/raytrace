@@ -1,18 +1,25 @@
 import json
 
 
-def dump(ray_history, fp):
-    frames = [x.tolist() for x in ray_history]
+def dump(all_ray_histories, fp):
 
-    lines = []
-    for i in xrange(len(frames[0])):
-        lines.append([])
+    serialized = []
 
-    for frame in frames:
-        for i, point in enumerate(frame):
-            lines[i].append(point)
+    for history, color in all_ray_histories:
 
-    json.dump(lines, fp)
+        frames = [x.tolist() for x in history]
+
+        lines = []
+        for i in xrange(len(frames[0])):
+            lines.append([])
+
+        for frame in frames:
+            for i, point in enumerate(frame):
+                lines[i].append(point)
+
+        serialized.append((lines, color))
+
+    json.dump(serialized, fp)
 
 
 def dumps(ray_history):

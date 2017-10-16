@@ -9,6 +9,12 @@ import ray_serializer as rs
 def main():
     '''
     TODO:
+        - serialization of prescriptions and test results.  (DONE)
+        - multiple ray fan input angles (DONE)
+        - graphical front end. (PROGRESS!)
+
+        - aperture? width of optical elements
+        - 3d support
         - spherical surfaces
         - aspherical surfaces
         - refractive elements
@@ -20,38 +26,38 @@ def main():
             - constants vs variables
             - constraints
         - fourier analysis?
-        - graphical front end
-        - 3d support
-        - serialization of prescriptions and test results.  (DONE)
         - desktop mode vs cloud mode
-        - aperture?
     '''
     ap = .4
-    # system = [
-    #     Parabolic(focal_length=-1, depth=1),
-    #     Parabolic(focal_length=-1, depth=-.5),
-    #     ImagePlane(depth=.5)
-    # ]
-
     fl = .75
     system = [
-        Parabolic(focal_length=-fl, depth=1),
-        ImagePlane(depth=-fl)
+        Parabolic(focal_length=-1, depth=.4),
+        Parabolic(focal_length=-10000000, depth=-.3),
+        ImagePlane(depth=.7)
     ]
+
+    # system = [
+    #     Parabolic(focal_length=-fl, depth=1),
+    #     ImagePlane(depth=-fl)
+    # ]
     compile(system)
 
-    rays = ray_fan(ap, 15, angle=2 * math.pi/180)
+    spread = 1
+    num = 5
+    rays_center = ray_fan(ap, num, angle=0 * math.pi/180)
+    rays_down = ray_fan(ap, num, angle= -spread * math.pi/180)
+    rays_up = ray_fan(ap, num, angle= spread * math.pi/180)
 
-    ray_history = solve(system, rays)
+    all_ray_histories = []
+    all_ray_histories.append((solve(system, rays_center), "green"))
+    all_ray_histories.append((solve(system, rays_down), "red"))
+    all_ray_histories.append((solve(system, rays_up), "blue"))
 
     with open("test.rays", "w") as ofile:
-        rs.dump(ray_history, ofile)
+        rs.dump(all_ray_histories, ofile)
     with open("test.zemax", "w") as ofile:
         ps.dump(system, ofile)
 
-    # for f in ray_history:
-    #     print "frame"
-    #     print f
 
 def solve(system, rays):
     ray_history = []
@@ -75,7 +81,7 @@ def compile(system):
         element.set_x_offset(x)
 
 
-def ray_fan(diameter, n, angle=0):
+def ray_fan(diameter, n, angle=0, freq=550):
     # A line equation is defined by just y intercept and slope
     # y = mx + b
 
@@ -84,8 +90,9 @@ def ray_fan(diameter, n, angle=0):
     bs = np.linspace(-diameter/2, diameter/2, n)
     xs = np.zeros((n), dtype='float64')
     ys = bs.copy()
+    frequencies = np.array([freq] * n)
 
-    return np.array(zip(ms, bs, xs, ys))
+    return np.array(zip(ms, bs, xs, ys, frequencies))
 
 
 def spread(summary):
