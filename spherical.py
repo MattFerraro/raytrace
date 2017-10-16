@@ -1,19 +1,25 @@
 import numpy as np
 
 
-class Parabolic(object):
-    def __init__(self, focal_length, depth, height):
-        self.a = self.focal_length_to_x_squared_coeff(focal_length)
+class Spherical(object):
+    '''
+    (x - a)^2 + (y - b)^2 = r^2
+
+    so circles have a centerpoint (a,b) and a radius (r)
+    '''
+    def __init__(self, focal_length, depth):
+        self.r = self.focal_length_to_radius(focal_length)
+        self.a = None
+        self.b = 0
         self.depth = depth
-        self.height = height
 
     def set_x_offset(self, x_offset):
-        self.c = x_offset
+        self.a = x_offset
 
 
     def prop(self, eqns):
         a = self.a
-        c = self.c
+        b = self.b
 
         result_ms = []
         result_bs = []
@@ -73,19 +79,9 @@ class Parabolic(object):
         return np.array(zip(
             result_ms, result_bs, result_xs, result_ys, result_freqs))
 
-    def focal_length_to_x_squared_coeff(self, focal_length):
-        '''
-        ax^2 = focal_length
-        2ax = 1
-        x = 1 / (2a)
-        x^2 = 1 / 4a^2 = 1/a * 1/4a
-        a * 1/a * 1/4a = focal_length
-        1/4a = focal_length
-        4a = 1 / focal_length
-        a = 1 / (4 * focal_length)
-        '''
-        return 1.0 / (4 * focal_length)
+    def focal_length_to_radius(self, focal_length):
+        return focal_length * 2
 
     def __str__(self):
-        return "Parabolic: x = {} * y * y + {} : {}".format(self.a, self.c, self.height)
+        return "Spherical: x = {} * y * y + {}".format(self.r, self.c)
 

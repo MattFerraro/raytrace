@@ -2,6 +2,7 @@ import numpy as np
 import math
 from parabolic import Parabolic
 from image_plane import ImagePlane
+from flat import Flat
 import prescription_serializer as ps
 import ray_serializer as rs
 
@@ -31,9 +32,10 @@ def main():
     ap = .4
     fl = .75
     system = [
-        Parabolic(focal_length=-1, depth=.4),
-        Parabolic(focal_length=-10000000, depth=-.3),
-        ImagePlane(depth=.7)
+        Parabolic(focal_length=-1, depth=.4, height=.45),
+        # Parabolic(focal_length=-10000000, depth=-.3),
+        Flat(depth=-.3, height=ap),
+        ImagePlane(depth=.7, height=ap / 2)
     ]
 
     # system = [

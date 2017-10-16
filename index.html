@@ -108,15 +108,16 @@
 							let element = prescription[i];
 
 							let details = element.split(":");
-							expr = details[1];
+							let expr = details[1];
+							let element_height = parseFloat(details[2]);
+							console.log("HEIGHT", element_height);
 
-							// console.log("TITLE", details[0]);
 							context.strokeStyle = "#000";
 
 							let splits = 10;
 							let y = minY;
 							for (let j = 0; j <= splits; j++) {
-								y = (j / splits) * yDiff + minY;
+								y = (j / splits) * element_height - element_height / 2;
 								x = eval(expr);
 
 								let tx = x * stretch + xbuf / 2;

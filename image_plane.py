@@ -2,8 +2,9 @@ import numpy as np
 
 
 class ImagePlane(object):
-    def __init__(self, depth):
+    def __init__(self, depth, height):
         self.depth = depth
+        self.height = height
 
     def set_x_offset(self, x_offset):
         self.x = x_offset
@@ -29,4 +30,4 @@ class ImagePlane(object):
         return np.array(zip(ms, bs, xs, ys, freqs))
 
     def __str__(self):
-        return "Image Plane: x = {}".format(self.x)
+        return "Image Plane: x = {} : {}".format(self.x, self.height)
