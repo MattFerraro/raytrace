@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from parabolic import Parabolic
+from spherical import Spherical
 from image_plane import ImagePlane
 from flat import Flat
 import prescription_serializer as ps
@@ -12,15 +13,15 @@ def main():
     TODO:
         - serialization of prescriptions and test results.  (DONE)
         - multiple ray fan input angles (DONE)
-        - graphical front end. (PROGRESS!)
+        - start graphical front end. (DONE)
+        - aperture? width of optical elements (DONE)
 
-        - aperture? width of optical elements
-        - 3d support
         - spherical surfaces
-        - aspherical surfaces
         - refractive elements
             - DB of refractive indices?
             - support for different wavelengths
+        - 3d support
+        - aspherical surfaces
         - numerical cost functions
             - compare against airy disk size
         - fast optimizer
@@ -29,13 +30,13 @@ def main():
         - fourier analysis?
         - desktop mode vs cloud mode
     '''
-    ap = .4
+    ap = .5
     fl = .75
     system = [
-        Parabolic(focal_length=-1, depth=.4, height=.45),
-        # Parabolic(focal_length=-10000000, depth=-.3),
-        Flat(depth=-.3, height=ap),
-        ImagePlane(depth=.7, height=ap / 2)
+        # Parabolic(focal_length=-1, depth=.4, height=.45),
+        Spherical(focal_length=-.85, depth=.85, height=.55),
+        # Flat(depth=-.3, height=ap),
+        ImagePlane(depth=-.85, height=ap / 2)
     ]
 
     # system = [
@@ -45,7 +46,7 @@ def main():
     compile(system)
 
     spread = 1
-    num = 5
+    num = 10
     rays_center = ray_fan(ap, num, angle=0 * math.pi/180)
     rays_down = ray_fan(ap, num, angle= -spread * math.pi/180)
     rays_up = ray_fan(ap, num, angle= spread * math.pi/180)
